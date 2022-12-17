@@ -53,7 +53,7 @@ namespace KSP_PAPI
 #endif
             ksc_papi_27_position = new Vector3(62, 0, 1014);
             ksc_papi_27_rotation = Quaternion.Euler(0, 90, 0);
-            ksc_papi_09_position = new Vector3(-62, 0, -1014);
+            ksc_papi_09_position = new Vector3(-78, 0, -890);
             ksc_papi_09_rotation = Quaternion.Euler(0, -90, 0);
         }
 
@@ -94,7 +94,7 @@ namespace KSP_PAPI
         public void FixedUpdate()
         {
 #if POSITIONING
-            else
+            if (ksc_papi_09 != null)
             {
                 Vector3 a = new Vector3(keyBindings["mod_x"].GetKey(true) ? 1 : 0, keyBindings["mod_y"].GetKey(true) ? 1 : 0, keyBindings["mod_z"].GetKey(true) ? 1 : 0);
                 if (a != Vector3.zero)
@@ -103,35 +103,35 @@ namespace KSP_PAPI
                     {
                         if (keyBindings["mod_n"].GetKey(true))
                         {
-                            defaultRotation = Quaternion.Euler(defaultRotation.eulerAngles - a);
+                            ksc_papi_09.transform.localRotation = Quaternion.Euler(ksc_papi_09.transform.localRotation.eulerAngles - a);
                         }
                         else
                         {
-                            defaultRotation = Quaternion.Euler(defaultRotation.eulerAngles + a);
+                            ksc_papi_09.transform.localRotation = Quaternion.Euler(ksc_papi_09.transform.localRotation.eulerAngles + a);
                         }
                     }
                     else if (keyBindings["mod_n"].GetKey(true))
                     {
-                        adjustment -= a;
+                        ksc_papi_09.transform.localPosition -= a;
                     }
                     else
                     {
-                        adjustment += a;
+                        ksc_papi_09.transform.localPosition += a;
                     }
                 }
                 if (keyBindings["mod_c"].GetKeyDown(true))
                 {
                     Log($"----- testPapi properties -----{Environment.NewLine}" +
-                        $"transform.position = {testPapi.transform.position}{Environment.NewLine}" +
-                        $"transform.localPosition = {testPapi.transform.localPosition}{Environment.NewLine}" +
-                        $"transform.rotation.eulerAngles = {testPapi.transform.rotation.eulerAngles}{Environment.NewLine}" +
-                        $"transform.localRotation.eulerAngles = {testPapi.transform.localRotation.eulerAngles}{Environment.NewLine}" +
+                        $"transform.position = {ksc_papi_09.transform.position}{Environment.NewLine}" +
+                        $"transform.localPosition = {ksc_papi_09.transform.localPosition}{Environment.NewLine}" +
+                        $"transform.rotation.eulerAngles = {ksc_papi_09.transform.rotation.eulerAngles}{Environment.NewLine}" +
+                        $"transform.localRotation.eulerAngles = {ksc_papi_09.transform.localRotation.eulerAngles}{Environment.NewLine}" +
                         $"-------------------------------");
                 }
                 if (keyBindings["mod_rst"].GetKeyDown(true))
                 {
-                    adjustment = new Vector3(48, 0, 1014);
-                    defaultRotation = Quaternion.Euler(0, 0, 0);
+                    ksc_papi_09.transform.localPosition = ksc_papi_09_position;
+                    ksc_papi_09.transform.localRotation = ksc_papi_09_rotation;
                 }
             }
 #endif
