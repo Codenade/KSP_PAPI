@@ -3,14 +3,15 @@ Shader "KSP_PAPI/PAPI"
 	Properties 
 	{
 		[MainTexture] _MainTex ("Texture", 2D) = "" {}
-		_LowColor ("Low Color", Color) = (1,0,0,1)
-		_HighColor ("High Color", Color) = (1,1,1,1)
-		_LightMaskLL ("Light Mask LL", Color) = (0.862,0,1,1) // #dc00ff
-		_LightMaskLM ("Light Mask LM", Color) = (1,0,0.964,1) // #ff00f6
-		_LightMaskRM ("Light Mask RM", Color) = (1,0,0.862,1) // #ff00dc
-		_LightMaskRR ("Light Mask RR", Color) = (1,0,0.780,1) // #ff00c7
+		_LowColor ("Low Color", Color) = (1,0,0,1)			  	// #ff0000
+		_HighColor ("High Color", Color) = (1,1,1,1)			// #ffffff
+		_OffColor ("Off Color", Color) = (0,0,0,1)				// #000000
+		_LightMaskLL ("Light Mask LL", Color) = (0.862,0,1,1) 	// #dc00ff
+		_LightMaskLM ("Light Mask LM", Color) = (1,0,0.964,1) 	// #ff00f6
+		_LightMaskRM ("Light Mask RM", Color) = (1,0,0.862,1) 	// #ff00dc
+		_LightMaskRR ("Light Mask RR", Color) = (1,0,0.780,1) 	// #ff00c7
 		_Slopes ("Slopes", Vector) = (3.5, 3.2, 2.8, 2.5)
-		_Transition ("Transition", Float) = 0.1
+		_Transition ("Transition", Float) = 0.1					// Angle in which the lights fade between colors
 		[HideInInspector] _Angle ("Angle", Float) = 3
 	}
 	
@@ -23,7 +24,8 @@ Shader "KSP_PAPI/PAPI"
 		Cull Back
 
 		CGPROGRAM
-		
+
+		#include "./KSP_PAPI.cginc"
 		#include "../LightingKSP.cginc"
         #pragma surface surf BlinnPhong keepalpha
 		#pragma target 3.0
@@ -31,6 +33,7 @@ Shader "KSP_PAPI/PAPI"
 		uniform sampler2D _MainTex;
 		uniform half4 _LowColor;
 		uniform half4 _HighColor;
+		uniform half4 _OffColor;
 		uniform half4 _LightMaskLL;
 		uniform half4 _LightMaskLM;
 		uniform half4 _LightMaskRM;
@@ -64,25 +67,41 @@ Shader "KSP_PAPI/PAPI"
 			float4 pxl = tex2D(_MainTex, IN.uv_MainTex);
 			if (all(abs(pxl.rgb - _LightMaskLL.rgb) <= 0.03))
 			{
-				float4 mColor = lerp(_LowColor, _HighColor, clamp((_Angle - _Slopes[0] + (_Transition / 2.0)) / _Transition , 0, 1));
+				float4 mColor;
+				if (IsNan(_Angle) || _Angle < 0)
+					mColor = _OffColor;
+				else
+					mColor = lerp(_LowColor, _HighColor, clamp((_Angle - _Slopes[0] + (_Transition / 2.0)) / _Transition , 0, 1));
 				o.Albedo = mColor.rgb;
 				o.Emission = mColor;
 			}
 			else if (all(abs(pxl.rgb - _LightMaskLM.rgb) <= 0.03))
 			{
-				float3 mColor = lerp(_LowColor, _HighColor, clamp((_Angle - _Slopes[1] + (_Transition / 2.0)) / _Transition , 0, 1));
+				float4 mColor;
+				if (IsNan(_Angle) || _Angle < 0)
+					mColor = _OffColor;
+				else
+					mColor = lerp(_LowColor, _HighColor, clamp((_Angle - _Slopes[1] + (_Transition / 2.0)) / _Transition , 0, 1));
 				o.Albedo = mColor.rgb;
 				o.Emission = mColor;
 			}
 			else if (all(abs(pxl.rgb - _LightMaskRM.rgb) <= 0.03))
 			{
-				float3 mColor = lerp(_LowColor, _HighColor, clamp((_Angle - _Slopes[2] + (_Transition / 2.0)) / _Transition , 0, 1));
+				float4 mColor;
+				if (IsNan(_Angle) || _Angle < 0)
+					mColor = _OffColor;
+				else
+					mColor = lerp(_LowColor, _HighColor, clamp((_Angle - _Slopes[2] + (_Transition / 2.0)) / _Transition , 0, 1));
 				o.Albedo = mColor.rgb;
 				o.Emission = mColor;
 			}
 			else if (all(abs(pxl.rgb - _LightMaskRR.rgb) <= 0.03))
 			{
-				float3 mColor = lerp(_LowColor, _HighColor, clamp((_Angle - _Slopes[3] + (_Transition / 2.0)) / _Transition , 0, 1));
+				float4 mColor;
+				if (IsNan(_Angle) || _Angle < 0)
+					mColor = _OffColor;
+				else
+					mColor = lerp(_LowColor, _HighColor, clamp((_Angle - _Slopes[3] + (_Transition / 2.0)) / _Transition , 0, 1));
 				o.Albedo = mColor.rgb;
 				o.Emission = mColor; 
 			}
